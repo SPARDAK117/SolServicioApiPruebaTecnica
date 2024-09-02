@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ServicioApiPruebaTecnica.Data;
 
@@ -11,9 +12,11 @@ using ServicioApiPruebaTecnica.Data;
 namespace ServicioApiPruebaTecnica.Migrations
 {
     [DbContext(typeof(PruebaTecnicaOMCContextDB))]
-    partial class PruebaTecnicaOMCContextDBModelSnapshot : ModelSnapshot
+    [Migration("20240902190945_AddLogEntriesTable2")]
+    partial class AddLogEntriesTable2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,7 +25,7 @@ namespace ServicioApiPruebaTecnica.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("LogEntry", b =>
+            modelBuilder.Entity("ServicioApiPruebaTecnica.Data.LogEntry", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -32,29 +35,18 @@ namespace ServicioApiPruebaTecnica.Migrations
 
                     b.Property<string>("Action")
                         .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("Timestamp")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Username")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("LogEntries", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Action = "Created initial log entry",
-                            Timestamp = new DateTime(2024, 9, 2, 19, 43, 32, 120, DateTimeKind.Utc).AddTicks(6378),
-                            Username = "admin"
-                        });
+                    b.ToTable("LogEntries");
                 });
 
             modelBuilder.Entity("ServicioApiPruebaTecnica.Data.Producto", b =>
@@ -94,7 +86,7 @@ namespace ServicioApiPruebaTecnica.Migrations
                             Id = 1,
                             ProductoName = "Producto A",
                             SKU = "A123",
-                            created_at = new DateTime(2024, 9, 2, 13, 43, 31, 795, DateTimeKind.Local).AddTicks(8605),
+                            created_at = new DateTime(2024, 9, 2, 13, 9, 44, 235, DateTimeKind.Local).AddTicks(5651),
                             deleted_at = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             updated_at = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -103,7 +95,7 @@ namespace ServicioApiPruebaTecnica.Migrations
                             Id = 2,
                             ProductoName = "Producto B",
                             SKU = "B456",
-                            created_at = new DateTime(2024, 9, 2, 13, 43, 31, 795, DateTimeKind.Local).AddTicks(8618),
+                            created_at = new DateTime(2024, 9, 2, 13, 9, 44, 235, DateTimeKind.Local).AddTicks(5656),
                             deleted_at = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             updated_at = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -112,7 +104,7 @@ namespace ServicioApiPruebaTecnica.Migrations
                             Id = 3,
                             ProductoName = "Producto C",
                             SKU = "C789",
-                            created_at = new DateTime(2024, 9, 2, 13, 43, 31, 795, DateTimeKind.Local).AddTicks(8620),
+                            created_at = new DateTime(2024, 9, 2, 13, 9, 44, 235, DateTimeKind.Local).AddTicks(5658),
                             deleted_at = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             updated_at = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
@@ -158,7 +150,7 @@ namespace ServicioApiPruebaTecnica.Migrations
                             Direccion = "Calle Xola 23#",
                             SucursalName = "Xola",
                             Telefono = "5546354636",
-                            created_at = new DateTime(2024, 9, 2, 13, 43, 31, 795, DateTimeKind.Local).AddTicks(6732),
+                            created_at = new DateTime(2024, 9, 2, 13, 9, 44, 235, DateTimeKind.Local).AddTicks(4495),
                             updated_at = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
@@ -167,7 +159,7 @@ namespace ServicioApiPruebaTecnica.Migrations
                             Direccion = "Calle Chilpanginco 23#",
                             SucursalName = "Chilpancigo",
                             Telefono = "5532165487",
-                            created_at = new DateTime(2024, 9, 2, 13, 43, 31, 795, DateTimeKind.Local).AddTicks(6756),
+                            created_at = new DateTime(2024, 9, 2, 13, 9, 44, 235, DateTimeKind.Local).AddTicks(4509),
                             updated_at = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
@@ -196,7 +188,7 @@ namespace ServicioApiPruebaTecnica.Migrations
                     b.ToTable("SucursalProductos", (string)null);
                 });
 
-            modelBuilder.Entity("ServicioApiPruebaTecnica.Data.Usuarios", b =>
+            modelBuilder.Entity("ServicioApiPruebaTecnica.Data.Usuario", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -206,45 +198,21 @@ namespace ServicioApiPruebaTecnica.Migrations
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Role")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)")
-                        .HasDefaultValue("user")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("Rol");
 
                     b.Property<string>("Username")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("Usuario");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Username")
-                        .IsUnique();
-
-                    b.ToTable("Usuarios", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            PasswordHash = "$2a$11$jCgbyEnQDkn3sF66Z5J.Jebl6HTPsyt9wtapkBKsIRA7KN/NmSCAG",
-                            Role = "admin",
-                            Username = "admin"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            PasswordHash = "$2a$11$ShWff.3sILzuPcboUP1GK.HpQFw.MKIThsir3Uk9aafOX6VAtwmKu",
-                            Role = "user",
-                            Username = "user"
-                        });
+                    b.ToTable("Usuarios");
                 });
 
             modelBuilder.Entity("ServicioApiPruebaTecnica.Data.SucursalProducto", b =>

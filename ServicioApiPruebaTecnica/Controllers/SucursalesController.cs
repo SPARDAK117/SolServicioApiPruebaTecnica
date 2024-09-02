@@ -1,35 +1,47 @@
-﻿using Microsoft.AspNetCore.JsonPatch;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using ServicioApiPruebaTecnica.Data;
 using ServicioApiPruebaTecnica.Models;
 using ServicioApiPruebaTecnica.Models.dataDTO;
+using ServicioApiPruebaTecnica.MyLogging;
+using ServicioApiPruebaTecnica.Services;
 
 namespace ServicioApiPruebaTecnica.Controllers
 {
+    
     [Route("api/[controller]")]
     [ApiController]
+    
 
     public class SucursalesController : ControllerBase
     {
 
         private readonly PruebaTecnicaOMCContextDB _dbContext;
+        private readonly ILogService _logService;
+        private readonly IMyLogger _logger;
 
-        public SucursalesController(PruebaTecnicaOMCContextDB dbContext)
+        public SucursalesController(PruebaTecnicaOMCContextDB dbContext,ILogService logService,IMyLogger logger)
         {
             _dbContext = dbContext;
+            _logService = logService;
+            _logger = logger;
         }
 
         //RespuestasAPI y Status Codes GetAllSucursales()
-        #region 
+        #region
         [HttpGet("All", Name = "BuscaTodasLasSucursales")]
         [Produces("application/json", "application/xml")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         #endregion
 
         //Método para recuperar todas las sucursales del sistema
         public ActionResult<IEnumerable<SucursalDTO>> GetAllSucursales()
         {
+            //var username = User.Identity?.Name;
             var sucursales = _dbContext.Sucursales.Select(s => new SucursalDTO()
             {
                 Id = s.Id,
@@ -37,7 +49,7 @@ namespace ServicioApiPruebaTecnica.Controllers
                 Direccion = s.Direccion,
                 Telefono = s.Telefono
             });
-
+            //_logService.Log(username, "Accedió a todas las sucursales");
             //Ok - 200 Success
             return Ok(sucursales);
         }
@@ -48,6 +60,8 @@ namespace ServicioApiPruebaTecnica.Controllers
         [Produces("application/json", "application/xml")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         #endregion
@@ -84,6 +98,8 @@ namespace ServicioApiPruebaTecnica.Controllers
         [Produces("application/json", "application/xml")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         #endregion
@@ -120,6 +136,8 @@ namespace ServicioApiPruebaTecnica.Controllers
         [Produces("application/json", "application/xml")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         #endregion
 
@@ -162,6 +180,8 @@ namespace ServicioApiPruebaTecnica.Controllers
         [Produces("application/json", "application/xml")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         #endregion
         //Método para HttpPut UpdateSucursal([FromBody]SucursalDTO model)
@@ -194,6 +214,8 @@ namespace ServicioApiPruebaTecnica.Controllers
         [Produces("application/json", "application/xml")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         #endregion
         //Método para HttpPut UpdateSucursal([FromBody]SucursalDTO model)
@@ -238,6 +260,8 @@ namespace ServicioApiPruebaTecnica.Controllers
         [Produces("application/json", "application/xml")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         #endregion
