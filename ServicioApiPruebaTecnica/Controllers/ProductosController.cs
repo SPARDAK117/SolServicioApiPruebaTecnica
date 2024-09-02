@@ -15,7 +15,6 @@ namespace ServicioApiPruebaTecnica.Controllers
         private readonly PruebaTecnicaOMCContextDB _dbContext;
         private readonly IMyLogger _logger;
 
-
         public ProductosController(PruebaTecnicaOMCContextDB dbContext, IMyLogger logger)
         {
             _dbContext = dbContext;
@@ -31,20 +30,19 @@ namespace ServicioApiPruebaTecnica.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         #endregion
-    public ActionResult<IEnumerable<ProductoDTO>> GetAllProductos()
+        public ActionResult<IEnumerable<ProductoDTO>> GetAllProductos()
         {
+            _logger.Log("GetAllProductos - Method started.");
             try
             {
-
-                _logger.Log("GetAllProductos called.");
                 var productos = _dbContext.Productos.Select(p => new ProductoDTO()
                 {
                     Id = p.Id,
                     ProductoName = p.ProductoName,
                     SKU = p.SKU
-                });
+                }).ToList();
 
-                _logger.Log($"{productos.Count()} sucursales found.");
+                _logger.Log($"GetAllProductos - {productos.Count()} productos found.");
                 return Ok(productos);
             }
             catch (Exception ex)
@@ -65,24 +63,23 @@ namespace ServicioApiPruebaTecnica.Controllers
         #endregion
         public ActionResult<ProductoDTO> GetProductoById(int id)
         {
-            //BadRequest - 400 - Client Error
+            _logger.Log("GetProductoById - Method started.");
             if (id <= 0)
             {
-                _logger.Log("Invalid ID parameter in GetProductoById.");
+                _logger.Log("GetProductoById - Invalid ID parameter.");
                 return BadRequest("Invalid ID.");
             }
+
             try
             {
-                _logger.Log($"GetProductoById called with ID: {id}.");
                 var producto = _dbContext.Productos.FirstOrDefault(p => p.Id == id);
 
-                //NotFound - 404 - Client error
                 if (producto == null)
                 {
-                    _logger.Log($"Producto with ID {id} not found.");
+                    _logger.Log($"GetProductoById - Producto with ID {id} not found.");
                     return NotFound($"El producto con el id {id} no fue encontrado");
                 }
-                //creamos un nuevo objeto producto DTO para recibir la información obtenida
+
                 var productoDTO = new ProductoDTO()
                 {
                     Id = producto.Id,
@@ -90,7 +87,7 @@ namespace ServicioApiPruebaTecnica.Controllers
                     SKU = producto.SKU
                 };
 
-                _logger.Log($"{productoDTO} producto found.");
+                _logger.Log($"GetProductoById - Producto with ID {id} found.");
                 return Ok(productoDTO);
             }
             catch (Exception ex)
@@ -110,21 +107,18 @@ namespace ServicioApiPruebaTecnica.Controllers
         #endregion
         public ActionResult<ProductoDTO> CreateProducto([FromBody] ProductoDTO model)
         {
-            //BadRequest - 400 - Client Error
+            _logger.Log("CreateProducto - Method started.");
             if (!ModelState.IsValid)
             {
-                _logger.Log("Invalid model parameters in CreateProducto.");
+                _logger.Log("CreateProducto - Invalid model state.");
                 return BadRequest(ModelState);
             }
 
             try
             {
-                _logger.Log("CreateProducto called.");
-
-                //BadRequest - 400 - Client error
                 if (model == null)
                 {
-                    _logger.Log($"El modelo es null");
+                    _logger.Log("CreateProducto - Model is null.");
                     return BadRequest();
                 }
 
@@ -140,13 +134,13 @@ namespace ServicioApiPruebaTecnica.Controllers
 
                 model.Id = producto.Id;
 
-                _logger.Log($"{producto} created correctly.");
+                _logger.Log($"CreateProducto - Producto created successfully with ID {model.Id}.");
                 return CreatedAtRoute("GetProductoById", new { id = model.Id }, model);
             }
             catch (Exception ex)
             {
-                _logger.Log($"Error in GetProductoById: {ex.Message}");
-                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while fetching the data.");
+                _logger.Log($"Error in CreateProducto: {ex.Message}");
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while creating the product.");
             }
         }
 
@@ -160,24 +154,20 @@ namespace ServicioApiPruebaTecnica.Controllers
         #endregion
         public ActionResult<ProductoDTO> UpdateProducto([FromBody] ProductoDTO model)
         {
-            //BadRequest - 400 - Client Error
+            _logger.Log("UpdateProducto - Method started.");
             if (model == null || model.Id <= 0)
             {
-                _logger.Log("Invalid model parameters in UpdateProducto.");
+                _logger.Log("UpdateProducto - Invalid model or ID.");
                 return BadRequest();
             }
 
             try
             {
-
-                _logger.Log("UpdateProducto called.");
-
                 var productoExistente = _dbContext.Productos.FirstOrDefault(p => p.Id == model.Id);
 
-                //NotFound - 404 - Client error
                 if (productoExistente == null)
                 {
-                    _logger.Log($"No se encontro el productp {productoExistente}");
+                    _logger.Log($"UpdateProducto - Producto with ID {model.Id} not found.");
                     return NotFound();
                 }
 
@@ -187,13 +177,13 @@ namespace ServicioApiPruebaTecnica.Controllers
 
                 _dbContext.SaveChanges();
 
-                _logger.Log($"{productoExistente} updated correctly.");
+                _logger.Log($"UpdateProducto - Producto with ID {model.Id} updated successfully.");
                 return NoContent();
             }
             catch (Exception ex)
             {
                 _logger.Log($"Error in UpdateProducto: {ex.Message}");
-                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while fetching the data.");
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while updating the product.");
             }
         }
 
@@ -207,19 +197,20 @@ namespace ServicioApiPruebaTecnica.Controllers
         #endregion
         public ActionResult<ProductoDTO> UpdatePartialProducto(int id, [FromBody] JsonPatchDocument<ProductoDTO> patchDocument)
         {
+            _logger.Log("UpdatePartialProducto - Method started.");
             if (patchDocument == null || id <= 0)
             {
-                _logger.Log("Invalid model parameters in UpdatePartialProducto.");
+                _logger.Log("UpdatePartialProducto - Invalid patch document or ID.");
                 return BadRequest();
             }
+
             try
             {
-                _logger.Log("UpdatePartialProducto called.");
                 var productoExistente = _dbContext.Productos.FirstOrDefault(p => p.Id == id);
 
                 if (productoExistente == null)
                 {
-                    _logger.Log($"No se encontro el producto {productoExistente}");
+                    _logger.Log($"UpdatePartialProducto - Producto with ID {id} not found.");
                     return NotFound();
                 }
 
@@ -234,7 +225,7 @@ namespace ServicioApiPruebaTecnica.Controllers
 
                 if (!ModelState.IsValid)
                 {
-                    _logger.Log($"No se valido el producto {productoExistente}");
+                    _logger.Log("UpdatePartialProducto - Model state is invalid after applying patch.");
                     return BadRequest(ModelState);
                 }
 
@@ -243,13 +234,13 @@ namespace ServicioApiPruebaTecnica.Controllers
                 productoExistente.updated_at = DateTime.Now;
 
                 _dbContext.SaveChanges();
-                _logger.Log($"{productoExistente} patch correctly.");
+                _logger.Log($"UpdatePartialProducto - Producto with ID {id} patched successfully.");
                 return NoContent();
             }
             catch (Exception ex)
             {
                 _logger.Log($"Error in UpdatePartialProducto: {ex.Message}");
-                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while fetching the data.");
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while patching the product.");
             }
         }
 
@@ -264,34 +255,33 @@ namespace ServicioApiPruebaTecnica.Controllers
         #endregion
         public ActionResult<bool> DeleteProductoById(int id)
         {
+            _logger.Log("DeleteProductoById - Method started.");
             if (id <= 0)
             {
-                _logger.Log($"Invalid {id} parameters in DeleteProductoById.");
+                _logger.Log("DeleteProductoById - Invalid ID parameter.");
                 return BadRequest();
             }
 
             try
             {
-                _logger.Log("DeleteProductoById called.");
-
                 var producto = _dbContext.Productos.FirstOrDefault(p => p.Id == id);
 
                 if (producto == null)
                 {
-                    _logger.Log($"No se encontro el producto {producto}");
+                    _logger.Log($"DeleteProductoById - Producto with ID {id} not found.");
                     return NotFound($"El producto con el Id {id} no fue encontrado");
                 }
 
                 _dbContext.Productos.Remove(producto);
                 _dbContext.SaveChanges();
 
-                _logger.Log($"{producto} deleted correctly.");
+                _logger.Log($"DeleteProductoById - Producto with ID {id} deleted successfully.");
                 return Ok(true);
             }
             catch (Exception ex)
             {
                 _logger.Log($"Error in DeleteProductoById: {ex.Message}");
-                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while fetching the data.");
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while deleting the product.");
             }
         }
     }

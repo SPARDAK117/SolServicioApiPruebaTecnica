@@ -6,56 +6,54 @@ using ServicioApiPruebaTecnica.Models;
 using ServicioApiPruebaTecnica.Models.dataDTO;
 using ServicioApiPruebaTecnica.MyLogging;
 using ServicioApiPruebaTecnica.Services;
+using System;
 
 namespace ServicioApiPruebaTecnica.Controllers
 {
-    
     [Route("api/[controller]")]
     [ApiController]
-    
-
     public class SucursalesController : ControllerBase
     {
-
         private readonly PruebaTecnicaOMCContextDB _dbContext;
         private readonly ILogService _logService;
         private readonly IMyLogger _logger;
 
-        public SucursalesController(PruebaTecnicaOMCContextDB dbContext,ILogService logService,IMyLogger logger)
+        public SucursalesController(PruebaTecnicaOMCContextDB dbContext, ILogService logService, IMyLogger logger)
         {
             _dbContext = dbContext;
             _logService = logService;
             _logger = logger;
         }
 
-        //RespuestasAPI y Status Codes GetAllSucursales()
-        #region
         [HttpGet("All", Name = "BuscaTodasLasSucursales")]
         [Produces("application/json", "application/xml")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        #endregion
-
-        //Método para recuperar todas las sucursales del sistema
         public ActionResult<IEnumerable<SucursalDTO>> GetAllSucursales()
         {
-            //var username = User.Identity?.Name;
-            var sucursales = _dbContext.Sucursales.Select(s => new SucursalDTO()
+            _logger.Log("GetAllSucursales - Method started.");
+            try
             {
-                Id = s.Id,
-                SucursalName = s.SucursalName,
-                Direccion = s.Direccion,
-                Telefono = s.Telefono
-            });
-            //_logService.Log(username, "Accedió a todas las sucursales");
-            //Ok - 200 Success
-            return Ok(sucursales);
+                var sucursales = _dbContext.Sucursales.Select(s => new SucursalDTO()
+                {
+                    Id = s.Id,
+                    SucursalName = s.SucursalName,
+                    Direccion = s.Direccion,
+                    Telefono = s.Telefono
+                }).ToList();
+
+                _logger.Log("GetAllSucursales - Successfully retrieved all branches.");
+                return Ok(sucursales);
+            }
+            catch (Exception ex)
+            {
+                _logger.Log($"Error in GetAllSucursales: {ex.Message}");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error retrieving data from the database.");
+            }
         }
 
-        //RespuestasAPI y Status Codes GetSucursalById(int id)
-        #region
         [HttpGet("{id:int}", Name = "GetSucursalById")]
         [Produces("application/json", "application/xml")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -64,36 +62,43 @@ namespace ServicioApiPruebaTecnica.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        #endregion
-
-        //Método para recuperar la sucursal por su ID
-
         public ActionResult<SucursalDTO> GetSucursalById(int id)
         {
-            //BadRequest - 400 - Client Error
-            if (id <= 0)
-                return BadRequest();
-
-            var sucursal = _dbContext.Sucursales.Where(n => n.Id == id).FirstOrDefault();
-
-            //NotFound - 404 - Client error
-            if (sucursal == null)
-                return NotFound($"La sucursal con el id {id} no fue encontrado");
-
-            var sucursalDTO = new SucursalDTO()
+            _logger.Log("GetSucursalById - Method started.");
+            try
             {
-                Id = sucursal.Id,
-                SucursalName = sucursal.SucursalName,
-                Direccion = sucursal.Direccion,
-                Telefono = sucursal.Telefono
-            };
+                if (id <= 0)
+                {
+                    _logger.Log("GetSucursalById - Invalid ID provided.");
+                    return BadRequest("Invalid ID.");
+                }
 
-            //Ok - 200 Success
-            return Ok(sucursalDTO);
+                var sucursal = _dbContext.Sucursales.Where(n => n.Id == id).FirstOrDefault();
+
+                if (sucursal == null)
+                {
+                    _logger.Log($"GetSucursalById - Sucursal with ID {id} not found.");
+                    return NotFound($"La sucursal con el id {id} no fue encontrado");
+                }
+
+                var sucursalDTO = new SucursalDTO()
+                {
+                    Id = sucursal.Id,
+                    SucursalName = sucursal.SucursalName,
+                    Direccion = sucursal.Direccion,
+                    Telefono = sucursal.Telefono
+                };
+
+                _logger.Log($"GetSucursalById - Successfully retrieved branch with ID {id}.");
+                return Ok(sucursalDTO);
+            }
+            catch (Exception ex)
+            {
+                _logger.Log($"Error in GetSucursalById: {ex.Message}");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error retrieving data from the database.");
+            }
         }
 
-        //RespuestasAPI y Status Codes GetSucursalByName(string name)
-        #region
         [HttpGet("{name:alpha}", Name = "BuscaSucursalPorNombre")]
         [Produces("application/json", "application/xml")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -102,35 +107,43 @@ namespace ServicioApiPruebaTecnica.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        #endregion
-
-        //Método para encontrar Sucursal por Nombre
         public ActionResult<SucursalDTO> GetSucursalByName(string name)
         {
-            //BadRequest - 400 - Client Error
-            if (string.IsNullOrEmpty(name))
-                return BadRequest();
-
-            var sucursal = _dbContext.Sucursales.Where(n => n.SucursalName == name).FirstOrDefault();
-
-            //NotFound - 404 - Client Error
-            if (sucursal == null)
-                return NotFound($"La sucursal con el nombre {name} no fue encontrado");
-
-            var sucursalDTO = new SucursalDTO()
+            _logger.Log("GetSucursalByName - Method started.");
+            try
             {
-                Id = sucursal.Id,
-                SucursalName = sucursal.SucursalName,
-                Direccion = sucursal.Direccion,
-                Telefono = sucursal.Telefono
-            };
+                if (string.IsNullOrEmpty(name))
+                {
+                    _logger.Log("GetSucursalByName - Invalid name provided.");
+                    return BadRequest("Invalid name.");
+                }
 
-            //Ok - 200
-            return Ok(sucursalDTO);
+                var sucursal = _dbContext.Sucursales.Where(n => n.SucursalName == name).FirstOrDefault();
+
+                if (sucursal == null)
+                {
+                    _logger.Log($"GetSucursalByName - Sucursal with name {name} not found.");
+                    return NotFound($"La sucursal con el nombre {name} no fue encontrado");
+                }
+
+                var sucursalDTO = new SucursalDTO()
+                {
+                    Id = sucursal.Id,
+                    SucursalName = sucursal.SucursalName,
+                    Direccion = sucursal.Direccion,
+                    Telefono = sucursal.Telefono
+                };
+
+                _logger.Log($"GetSucursalByName - Successfully retrieved branch with name {name}.");
+                return Ok(sucursalDTO);
+            }
+            catch (Exception ex)
+            {
+                _logger.Log($"Error in GetSucursalByName: {ex.Message}");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error retrieving data from the database.");
+            }
         }
 
-        //RespuestasAPI y Status Codes CreateSucursal([FromBody] SucursalDTO model)
-        #region
         [HttpPost]
         [Route("Crear")]
         [Produces("application/json", "application/xml")]
@@ -139,42 +152,46 @@ namespace ServicioApiPruebaTecnica.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        #endregion
-
         public ActionResult<SucursalDTO> CreateSucursal([FromBody] SucursalDTO model)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            if (model == null)
-                return BadRequest();
-
-            //int newId = _dbContext.Sucursales.LastOrDefault().Id + 1;
-
-            Sucursal sucursal = new Sucursal
+            _logger.Log("CreateSucursal - Method started.");
+            try
             {
-                SucursalName = model.SucursalName,
-                Direccion = model.Direccion,
-                Telefono = model.Telefono,
-                created_at = DateTime.Now,
+                if (!ModelState.IsValid)
+                {
+                    _logger.Log("CreateSucursal - Invalid model state.");
+                    return BadRequest(ModelState);
+                }
 
-            };
+                if (model == null)
+                {
+                    _logger.Log("CreateSucursal - Model is null.");
+                    return BadRequest();
+                }
 
-            //Se crea nuevo registro de Sucursal
-            _dbContext.Sucursales.Add(sucursal);
-            _dbContext.SaveChanges();
+                Sucursal sucursal = new Sucursal
+                {
+                    SucursalName = model.SucursalName,
+                    Direccion = model.Direccion,
+                    Telefono = model.Telefono,
+                    created_at = DateTime.Now,
+                };
 
-            model.Id = sucursal.Id;
+                _dbContext.Sucursales.Add(sucursal);
+                _dbContext.SaveChanges();
 
-            //Ok - 201 - Created
-            //Detalles de la nueva sucursal
-            //https://localhost:7257/api/Sucursales/id
-            return CreatedAtRoute("GetSucursalById", new { id = model.Id }, model);
+                model.Id = sucursal.Id;
+
+                _logger.Log($"CreateSucursal - Successfully created a new branch with ID {model.Id}.");
+                return CreatedAtRoute("GetSucursalById", new { id = model.Id }, model);
+            }
+            catch (Exception ex)
+            {
+                _logger.Log($"Error in CreateSucursal: {ex.Message}");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error creating the new branch.");
+            }
         }
 
-
-        //RespuestasAPI y Status Codes UpdateSucursal([FromBody]SucursalDTO model)
-        #region
         [HttpPut]
         [Route("Editar")]
         [Produces("application/json", "application/xml")]
@@ -183,32 +200,41 @@ namespace ServicioApiPruebaTecnica.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        #endregion
-        //Método para HttpPut UpdateSucursal([FromBody]SucursalDTO model)
         public ActionResult<SucursalDTO> UpdateSucursal([FromBody] SucursalDTO model)
         {
-            //BadRequest - 400 - Client Error
-            if (model == null || model.Id <= 0)
-                return BadRequest();
+            _logger.Log("UpdateSucursal - Method started.");
+            try
+            {
+                if (model == null || model.Id <= 0)
+                {
+                    _logger.Log("UpdateSucursal - Invalid model or ID.");
+                    return BadRequest();
+                }
 
-            var SucursalExistente = _dbContext.Sucursales.Where(S => S.Id == model.Id).FirstOrDefault();
+                var SucursalExistente = _dbContext.Sucursales.Where(S => S.Id == model.Id).FirstOrDefault();
 
-            //NotFound - 404 - Client Error
-            if (SucursalExistente == null)
-                return NotFound();
+                if (SucursalExistente == null)
+                {
+                    _logger.Log($"UpdateSucursal - Sucursal with ID {model.Id} not found.");
+                    return NotFound();
+                }
 
-            SucursalExistente.SucursalName = model.SucursalName;
-            SucursalExistente.Direccion = model.Direccion;
-            SucursalExistente.Telefono = model.Telefono;
-            SucursalExistente.updated_at = DateTime.Now;
-            _dbContext.SaveChanges();
+                SucursalExistente.SucursalName = model.SucursalName;
+                SucursalExistente.Direccion = model.Direccion;
+                SucursalExistente.Telefono = model.Telefono;
+                SucursalExistente.updated_at = DateTime.Now;
+                _dbContext.SaveChanges();
 
-            //NoContent - 204
-            return NoContent();
+                _logger.Log($"UpdateSucursal - Successfully updated branch with ID {model.Id}.");
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                _logger.Log($"Error in UpdateSucursal: {ex.Message}");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error updating the branch.");
+            }
         }
 
-        //RespuestasAPI y Status Codes UpdateSucursal([FromBody]SucursalDTO model)
-        #region
         [HttpPatch]
         [Route("{id:int}/Patch", Name = "EditarPartial")]
         [Produces("application/json", "application/xml")]
@@ -217,45 +243,57 @@ namespace ServicioApiPruebaTecnica.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        #endregion
-        //Método para HttpPut UpdateSucursal([FromBody]SucursalDTO model)
         public ActionResult<SucursalDTO> UpdatePartialSucursal(int id, [FromBody] JsonPatchDocument<SucursalDTO> patchDocument)
         {
-            //BadRequest - 400 - Client Error
-            if (patchDocument == null || id <= 0)
-                return BadRequest();
-
-            var SucursalExistente = _dbContext.Sucursales.Where(S => S.Id == id).FirstOrDefault();
-
-            //NotFound - 404 - Client Error
-            if (SucursalExistente == null)
-                return NotFound();
-
-            var sucursalDTO = new SucursalDTO
+            _logger.Log("UpdatePartialSucursal - Method started.");
+            try
             {
-                Id = SucursalExistente.Id,
-                SucursalName = SucursalExistente.SucursalName,
-                Direccion = SucursalExistente.Direccion,
-                Telefono = SucursalExistente.Telefono
-            };
+                if (patchDocument == null || id <= 0)
+                {
+                    _logger.Log("UpdatePartialSucursal - Invalid patch document or ID.");
+                    return BadRequest();
+                }
 
-            patchDocument.ApplyTo(sucursalDTO, ModelState);
+                var SucursalExistente = _dbContext.Sucursales.Where(S => S.Id == id).FirstOrDefault();
 
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                if (SucursalExistente == null)
+                {
+                    _logger.Log($"UpdatePartialSucursal - Sucursal with ID {id} not found.");
+                    return NotFound();
+                }
 
-            SucursalExistente.SucursalName = sucursalDTO.SucursalName;
-            SucursalExistente.Direccion = sucursalDTO.Direccion;
-            SucursalExistente.Telefono = sucursalDTO.Telefono;
-            SucursalExistente.updated_at = DateTime.Now;
+                var sucursalDTO = new SucursalDTO
+                {
+                    Id = SucursalExistente.Id,
+                    SucursalName = SucursalExistente.SucursalName,
+                    Direccion = SucursalExistente.Direccion,
+                    Telefono = SucursalExistente.Telefono
+                };
 
-            _dbContext.SaveChanges();
-            //NoContent - 204
-            return NoContent();
+                patchDocument.ApplyTo(sucursalDTO, ModelState);
+
+                if (!ModelState.IsValid)
+                {
+                    _logger.Log("UpdatePartialSucursal - Model state is invalid after applying patch.");
+                    return BadRequest(ModelState);
+                }
+
+                SucursalExistente.SucursalName = sucursalDTO.SucursalName;
+                SucursalExistente.Direccion = sucursalDTO.Direccion;
+                SucursalExistente.Telefono = sucursalDTO.Telefono;
+                SucursalExistente.updated_at = DateTime.Now;
+
+                _dbContext.SaveChanges();
+                _logger.Log($"UpdatePartialSucursal - Successfully patched branch with ID {id}.");
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                _logger.Log($"Error in UpdatePartialSucursal: {ex.Message}");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error updating the branch.");
+            }
         }
 
-        //RespuestasAPI y Status Codes CreateSucursal([FromBody] SucursalDTO model)
-        #region
         [HttpDelete("Delete/{id:int}", Name = "EliminarSucursalPorId")]
         [Produces("application/json", "application/xml")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -264,26 +302,36 @@ namespace ServicioApiPruebaTecnica.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        #endregion
-
-        //Método para eliminar Sucursales por su nombre
         public ActionResult<bool> DeleteSucursalByName(int id)
         {
+            _logger.Log("DeleteSucursalByName - Method started.");
+            try
+            {
+                if (id <= 0)
+                {
+                    _logger.Log("DeleteSucursalByName - Invalid ID provided.");
+                    return BadRequest("Invalid ID.");
+                }
 
-            //BadRequest - 400 - Client Error
-            if (id <= 0)
-                return BadRequest();
+                var sucursal = _dbContext.Sucursales.Where(n => n.Id == id).FirstOrDefault();
 
-            var sucursal = _dbContext.Sucursales.Where(n => n.Id == id).FirstOrDefault();
+                if (sucursal == null)
+                {
+                    _logger.Log($"DeleteSucursalByName - Sucursal with ID {id} not found.");
+                    return NotFound($"La sucursal con el Id {id} no fue encontrado");
+                }
 
-            //NotFound - 404 - Client Error
-            if (sucursal == null)
-                return NotFound($"La sucursal con el Id {id} no fue encontrado");
+                _dbContext.Sucursales.Remove(sucursal);
+                _dbContext.SaveChanges();
 
-            _dbContext.Sucursales.Remove(sucursal);
-            _dbContext.SaveChanges();
-            //Ok - 200
-            return Ok(true);
+                _logger.Log($"DeleteSucursalByName - Successfully deleted branch with ID {id}.");
+                return Ok(true);
+            }
+            catch (Exception ex)
+            {
+                _logger.Log($"Error in DeleteSucursalByName: {ex.Message}");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error deleting the branch.");
+            }
         }
     }
 }
