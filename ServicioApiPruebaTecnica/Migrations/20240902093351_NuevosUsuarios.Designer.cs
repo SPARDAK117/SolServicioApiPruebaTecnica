@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ServicioApiPruebaTecnica.Data;
 
@@ -11,9 +12,11 @@ using ServicioApiPruebaTecnica.Data;
 namespace ServicioApiPruebaTecnica.Migrations
 {
     [DbContext(typeof(PruebaTecnicaOMCContextDB))]
-    partial class PruebaTecnicaOMCContextDBModelSnapshot : ModelSnapshot
+    [Migration("20240902093351_NuevosUsuarios")]
+    partial class NuevosUsuarios
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -59,7 +62,7 @@ namespace ServicioApiPruebaTecnica.Migrations
                             Id = 1,
                             ProductoName = "Producto A",
                             SKU = "A123",
-                            created_at = new DateTime(2024, 9, 2, 4, 3, 8, 256, DateTimeKind.Local).AddTicks(3239),
+                            created_at = new DateTime(2024, 9, 2, 3, 33, 49, 884, DateTimeKind.Local).AddTicks(9292),
                             deleted_at = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             updated_at = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -68,7 +71,7 @@ namespace ServicioApiPruebaTecnica.Migrations
                             Id = 2,
                             ProductoName = "Producto B",
                             SKU = "B456",
-                            created_at = new DateTime(2024, 9, 2, 4, 3, 8, 256, DateTimeKind.Local).AddTicks(3253),
+                            created_at = new DateTime(2024, 9, 2, 3, 33, 49, 884, DateTimeKind.Local).AddTicks(9301),
                             deleted_at = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             updated_at = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
@@ -77,7 +80,7 @@ namespace ServicioApiPruebaTecnica.Migrations
                             Id = 3,
                             ProductoName = "Producto C",
                             SKU = "C789",
-                            created_at = new DateTime(2024, 9, 2, 4, 3, 8, 256, DateTimeKind.Local).AddTicks(3255),
+                            created_at = new DateTime(2024, 9, 2, 3, 33, 49, 884, DateTimeKind.Local).AddTicks(9302),
                             deleted_at = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             updated_at = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
@@ -123,7 +126,7 @@ namespace ServicioApiPruebaTecnica.Migrations
                             Direccion = "Calle Xola 23#",
                             SucursalName = "Xola",
                             Telefono = "5546354636",
-                            created_at = new DateTime(2024, 9, 2, 4, 3, 8, 256, DateTimeKind.Local).AddTicks(1530),
+                            created_at = new DateTime(2024, 9, 2, 3, 33, 49, 884, DateTimeKind.Local).AddTicks(7501),
                             updated_at = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
@@ -132,7 +135,7 @@ namespace ServicioApiPruebaTecnica.Migrations
                             Direccion = "Calle Chilpanginco 23#",
                             SucursalName = "Chilpancigo",
                             Telefono = "5532165487",
-                            created_at = new DateTime(2024, 9, 2, 4, 3, 8, 256, DateTimeKind.Local).AddTicks(1559),
+                            created_at = new DateTime(2024, 9, 2, 3, 33, 49, 884, DateTimeKind.Local).AddTicks(7521),
                             updated_at = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
@@ -199,17 +202,17 @@ namespace ServicioApiPruebaTecnica.Migrations
                     b.HasData(
                         new
                         {
-                            Id = 5,
-                            PasswordHash = "$2a$11$10nuLwUvSwh79v05XB28s.JYmGyYGizJNHyprjHZPK4pnbLTcPq/K",
-                            Role = "admin",
-                            Username = "admin"
+                            Id = 3,
+                            PasswordHash = "$2a$11$0VAktWpFAaKN2yBTMBe3Zuw9lgXzp4YByEjr9Kh2Zn6weix4J1ade",
+                            Role = "user",
+                            Username = "user2"
                         },
                         new
                         {
-                            Id = 6,
-                            PasswordHash = "$2a$11$VJKfcXk6/hjkH9zpI/GMY.CjY5ymEHsfAKy/XqZjEVIQZixTmkfc2",
+                            Id = 4,
+                            PasswordHash = "$2a$11$CEC3Wm5ZdKQJapV3KFNFoO71hOW6KqT1yKl8amtM7ycP.66W12rYe",
                             Role = "user",
-                            Username = "user"
+                            Username = "user3"
                         });
                 });
 
