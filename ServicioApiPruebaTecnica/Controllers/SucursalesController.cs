@@ -9,7 +9,6 @@ namespace ServicioApiPruebaTecnica.Controllers
     [Route("api/[controller]")]
     [ApiController]
 
-    
     public class SucursalesController : ControllerBase
     {
 
