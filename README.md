@@ -1,3 +1,5 @@
 # SolServicioApiPruebaTecnica
+Elaborado por Ing. Oswaldo Mejía 
+Desarrollo de aplicacion API REST con Arquitectura MVC desarrollada con .NET 8.0 y Entity Framework Core con Swagger 
 
-Desarrollo de CRUD completo para la gestión de sucursales e inventario de productos en una API Rest MVC con EntityFramework Core
+//Rutas API Rest disponibles 
