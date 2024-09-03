@@ -1,24 +1,28 @@
-﻿using Microsoft.AspNetCore.JsonPatch;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using ServicioApiPruebaTecnica.Data;
 using ServicioApiPruebaTecnica.Models;
 using ServicioApiPruebaTecnica.Models.dataDTO;
 using ServicioApiPruebaTecnica.MyLogging;
+using ServicioApiPruebaTecnica.Services;
 using System.Linq;
 
 namespace ServicioApiPruebaTecnica.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class SucursalProductoController : ControllerBase
     {
         private readonly PruebaTecnicaOMCContextDB _dbContext;
-
         private readonly IMyLogger _logger;
+        private readonly ILogService _logService;
 
-        public SucursalProductoController(PruebaTecnicaOMCContextDB dbContext,IMyLogger logger)
+        public SucursalProductoController(PruebaTecnicaOMCContextDB dbContext, ILogService logService, IMyLogger logger)
         {
             _dbContext = dbContext;
+            _logService = logService;
             _logger = logger;
         }
 
@@ -33,6 +37,8 @@ namespace ServicioApiPruebaTecnica.Controllers
         {
             try
             {
+                var username = User.Identity?.Name ?? "Anonymous123";
+                _logger.Log($"Request by {username}: GET /api/SucursalProducto/GetAllSucursalProductos");
                 _logger.Log("GetAllSucursalProductos called.");
 
                 var sucursalProductos = _dbContext.SucursalesProductos
@@ -66,6 +72,8 @@ namespace ServicioApiPruebaTecnica.Controllers
         {
             try
             {
+                var username = User.Identity?.Name ?? "Anonymous123";
+                _logger.Log($"Request by {username}: GET /api/SucursalProducto/GetProductoEnSucursalesPorNombre");
                 _logger.Log("GetProductoEnSucursalesPorNombre called.");
                 var productoEnSucursales = _dbContext.SucursalesProductos
                         .Where(sp => sp.Producto.ProductoName == productoName)
@@ -103,6 +111,8 @@ namespace ServicioApiPruebaTecnica.Controllers
         {
             try
             {
+                var username = User.Identity?.Name ?? "Anonymous123";
+                _logger.Log($"Request by {username}: GET /api/SucursalProducto/GetProductosPorSucursal");
                 _logger.Log("GetProductosPorSucursal called.");
 
                 var productosPorSucursal = _dbContext.SucursalesProductos
@@ -137,6 +147,10 @@ namespace ServicioApiPruebaTecnica.Controllers
         #endregion
         public ActionResult<SucursalProductoDTO> GetSucursalProductoById(int sucursalId, int productoId)
         {
+
+            var username = User.Identity?.Name ?? "Anonymous123";
+            _logger.Log($"Request by {username}: GET /api/SucursalProducto/GetSucursalProductoById");
+
             if (sucursalId <= 0 || productoId <= 0)
             {
                 _logger.Log("Invalid ID parameter in GetSucursalProductoById.");
@@ -184,6 +198,9 @@ namespace ServicioApiPruebaTecnica.Controllers
         
         public ActionResult<SucursalProductoDTO> CreateOrUpdateSucursalProducto([FromBody] PostInventarioDTO model)
         {
+            var username = User.Identity?.Name ?? "Anonymous123";
+            _logger.Log($"Request by {username}: POST /api/SucursalProducto/CreateOrUpdateSucursalProducto");
+
             if (!ModelState.IsValid)
             {
                 _logger.Log("Invalid model parameter in CreateOrUpdateSucursalProducto.");
@@ -261,6 +278,10 @@ namespace ServicioApiPruebaTecnica.Controllers
         #endregion
         public ActionResult UpdateSucursalProducto([FromBody] SucursalProductoDTO model)
         {
+            var username = User.Identity?.Name ?? "Anonymous123";
+            _logger.Log($"Request by {username}: PUT /api/SucursalProducto/UpdateSucursalProducto");
+
+
             if (model == null || model.SucursalId <= 0 || model.ProductoId <= 0)
             {
                 _logger.Log("Invalid model parameter in GetSucursalProductoById.");
@@ -308,6 +329,9 @@ namespace ServicioApiPruebaTecnica.Controllers
         #endregion
         public ActionResult UpdatePartialSucursalProducto(int sucursalId, int productoId, [FromBody] JsonPatchDocument<SucursalProductoDTO> patchDocument)
         {
+            var username = User.Identity?.Name ?? "Anonymous123";
+            _logger.Log($"Request by {username}: PATCH /api/SucursalProducto/UpdatePartialSucursalProducto");
+
             try
             {
                 _logger.Log("UpdatePartialSucursalProducto called.");
@@ -372,6 +396,9 @@ namespace ServicioApiPruebaTecnica.Controllers
         #endregion
         public ActionResult DeleteSucursalProducto(int sucursalId, int productoId)
         {
+            var username = User.Identity?.Name ?? "Anonymous123";
+            _logger.Log($"Request by {username}: DELETE /api/SucursalProducto/DeleteSucursalProducto");
+
             try
             {
                 _logger.Log("DeleteSucursalProducto called.");
@@ -413,6 +440,9 @@ namespace ServicioApiPruebaTecnica.Controllers
         #endregion
         public ActionResult DeleteSucursalProductoByName(string sucursalName, string productoName)
         {
+            var username = User.Identity?.Name ?? "Anonymous123";
+            _logger.Log($"Request by {username}: DELETE /api/SucursalProducto/DeleteSucursalProductoByName");
+
             try
             {
                 _logger.Log("DeleteSucursalProductoByName called.");

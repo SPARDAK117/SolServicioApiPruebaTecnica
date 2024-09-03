@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.JsonPatch;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using ServicioApiPruebaTecnica.Data;
 using ServicioApiPruebaTecnica.Models;
@@ -10,6 +11,7 @@ namespace ServicioApiPruebaTecnica.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ProductosController : ControllerBase
     {
         private readonly PruebaTecnicaOMCContextDB _dbContext;
@@ -32,6 +34,8 @@ namespace ServicioApiPruebaTecnica.Controllers
         #endregion
         public ActionResult<IEnumerable<ProductoDTO>> GetAllProductos()
         {
+            var username = User.Identity?.Name ?? "Anonymous123";
+            _logger.Log($"Request by {username}: GET /api/Productos/GetAllProductos");
             _logger.Log("GetAllProductos - Method started.");
             try
             {
@@ -63,6 +67,8 @@ namespace ServicioApiPruebaTecnica.Controllers
         #endregion
         public ActionResult<ProductoDTO> GetProductoById(int id)
         {
+            var username = User.Identity?.Name ?? "Anonymous123";
+            _logger.Log($"Request by {username}: GET /api/Productos/GetProductoById");
             _logger.Log("GetProductoById - Method started.");
             if (id <= 0)
             {
@@ -107,6 +113,8 @@ namespace ServicioApiPruebaTecnica.Controllers
         #endregion
         public ActionResult<ProductoDTO> CreateProducto([FromBody] ProductoDTO model)
         {
+            var username = User.Identity?.Name ?? "Anonymous123";
+            _logger.Log($"Request by {username}: POST /api/Productos/CreateProducto"); 
             _logger.Log("CreateProducto - Method started.");
             if (!ModelState.IsValid)
             {
@@ -154,6 +162,8 @@ namespace ServicioApiPruebaTecnica.Controllers
         #endregion
         public ActionResult<ProductoDTO> UpdateProducto([FromBody] ProductoDTO model)
         {
+            var username = User.Identity?.Name ?? "Anonymous123";
+            _logger.Log($"Request by {username}: PUT /api/Productos/UpdateProducto");
             _logger.Log("UpdateProducto - Method started.");
             if (model == null || model.Id <= 0)
             {
@@ -197,7 +207,10 @@ namespace ServicioApiPruebaTecnica.Controllers
         #endregion
         public ActionResult<ProductoDTO> UpdatePartialProducto(int id, [FromBody] JsonPatchDocument<ProductoDTO> patchDocument)
         {
+            var username = User.Identity?.Name ?? "Anonymous123";
+            _logger.Log($"Request by {username}: PATCH /api/Productos/UpdatePartialProducto");
             _logger.Log("UpdatePartialProducto - Method started.");
+
             if (patchDocument == null || id <= 0)
             {
                 _logger.Log("UpdatePartialProducto - Invalid patch document or ID.");
@@ -255,6 +268,8 @@ namespace ServicioApiPruebaTecnica.Controllers
         #endregion
         public ActionResult<bool> DeleteProductoById(int id)
         {
+            var username = User.Identity?.Name ?? "Anonymous123";
+            _logger.Log($"Request by {username}: DELETE /api/Productos/DeleteProductoById");
             _logger.Log("DeleteProductoById - Method started.");
             if (id <= 0)
             {

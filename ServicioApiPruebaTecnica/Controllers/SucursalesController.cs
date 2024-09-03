@@ -12,6 +12,7 @@ namespace ServicioApiPruebaTecnica.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class SucursalesController : ControllerBase
     {
         private readonly PruebaTecnicaOMCContextDB _dbContext;
@@ -26,13 +27,17 @@ namespace ServicioApiPruebaTecnica.Controllers
         }
 
         [HttpGet("All", Name = "BuscaTodasLasSucursales")]
+        #region
         [Produces("application/json", "application/xml")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        #endregion
         public ActionResult<IEnumerable<SucursalDTO>> GetAllSucursales()
         {
+            var username = User.Identity?.Name ?? "Anonymous123";
+            _logger.Log($"Request by {username}: GET /api/Sucursales/All");
             _logger.Log("GetAllSucursales - Method started.");
             try
             {
@@ -55,6 +60,7 @@ namespace ServicioApiPruebaTecnica.Controllers
         }
 
         [HttpGet("{id:int}", Name = "GetSucursalById")]
+        #region
         [Produces("application/json", "application/xml")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -62,8 +68,11 @@ namespace ServicioApiPruebaTecnica.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        #endregion
         public ActionResult<SucursalDTO> GetSucursalById(int id)
         {
+            var username = User.Identity?.Name ?? "Anonymous123";
+            _logger.Log($"Request by {username}: GET /api/Sucursales/GetSucursalById");
             _logger.Log("GetSucursalById - Method started.");
             try
             {
@@ -100,6 +109,7 @@ namespace ServicioApiPruebaTecnica.Controllers
         }
 
         [HttpGet("{name:alpha}", Name = "BuscaSucursalPorNombre")]
+        #region
         [Produces("application/json", "application/xml")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -107,8 +117,11 @@ namespace ServicioApiPruebaTecnica.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        #endregion
         public ActionResult<SucursalDTO> GetSucursalByName(string name)
         {
+            var username = User.Identity?.Name ?? "Anonymous123";
+            _logger.Log($"Request by {username}: GET /api/Sucursales/GetSucursalByName");
             _logger.Log("GetSucursalByName - Method started.");
             try
             {
@@ -145,6 +158,7 @@ namespace ServicioApiPruebaTecnica.Controllers
         }
 
         [HttpPost]
+        #region
         [Route("Crear")]
         [Produces("application/json", "application/xml")]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -152,8 +166,11 @@ namespace ServicioApiPruebaTecnica.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        #endregion
         public ActionResult<SucursalDTO> CreateSucursal([FromBody] SucursalDTO model)
         {
+            var username = User.Identity?.Name ?? "Anonymous123";
+            _logger.Log($"Request by {username}: POST /api/Sucursales/CreateSucursal");
             _logger.Log("CreateSucursal - Method started.");
             try
             {
@@ -193,6 +210,7 @@ namespace ServicioApiPruebaTecnica.Controllers
         }
 
         [HttpPut]
+        #region
         [Route("Editar")]
         [Produces("application/json", "application/xml")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -200,8 +218,11 @@ namespace ServicioApiPruebaTecnica.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        #endregion
         public ActionResult<SucursalDTO> UpdateSucursal([FromBody] SucursalDTO model)
         {
+            var username = User.Identity?.Name ?? "Anonymous123";
+            _logger.Log($"Request by {username}: PUT /api/Sucursales/UpdateSucursal");
             _logger.Log("UpdateSucursal - Method started.");
             try
             {
@@ -236,6 +257,7 @@ namespace ServicioApiPruebaTecnica.Controllers
         }
 
         [HttpPatch]
+        #region
         [Route("{id:int}/Patch", Name = "EditarPartial")]
         [Produces("application/json", "application/xml")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -243,8 +265,11 @@ namespace ServicioApiPruebaTecnica.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        #endregion
         public ActionResult<SucursalDTO> UpdatePartialSucursal(int id, [FromBody] JsonPatchDocument<SucursalDTO> patchDocument)
         {
+            var username = User.Identity?.Name ?? "Anonymous123";
+            _logger.Log($"Request by {username}: PATCH /api/Sucursales/UpdatePartialSucursal");
             _logger.Log("UpdatePartialSucursal - Method started.");
             try
             {
@@ -295,6 +320,7 @@ namespace ServicioApiPruebaTecnica.Controllers
         }
 
         [HttpDelete("Delete/{id:int}", Name = "EliminarSucursalPorId")]
+        #region
         [Produces("application/json", "application/xml")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -302,8 +328,11 @@ namespace ServicioApiPruebaTecnica.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        #endregion
         public ActionResult<bool> DeleteSucursalByName(int id)
         {
+            var username = User.Identity?.Name ?? "Anonymous123";
+            _logger.Log($"Request by {username}: DELETE /api/Sucursales/DeleteSucursalByName");
             _logger.Log("DeleteSucursalByName - Method started.");
             try
             {
