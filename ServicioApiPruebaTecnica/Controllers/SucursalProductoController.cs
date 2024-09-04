@@ -26,7 +26,6 @@ namespace ServicioApiPruebaTecnica.Controllers
             _logger = logger;
         }
 
-        // GET: api/SucursalProducto/All
         [HttpGet("All", Name = "GetAllSucursalProductos")]
         #region
         [Produces("application/json", "application/xml")]
@@ -47,8 +46,8 @@ namespace ServicioApiPruebaTecnica.Controllers
                             SucursalId = sp.SucursalId,
                             ProductoId = sp.ProductoId,
                             Cantidad = sp.Cantidad,
-                            SucursalName = sp.Sucursal.SucursalName, // Agrega el nombre de la sucursal
-                            ProductoName = sp.Producto.ProductoName  // Agrega el nombre del producto
+                            SucursalName = sp.Sucursal.SucursalName,
+                            ProductoName = sp.Producto.ProductoName 
                         }).ToList();
 
                 _logger.Log($"{sucursalProductos.Count()} inventario found.");
@@ -80,9 +79,9 @@ namespace ServicioApiPruebaTecnica.Controllers
                         .Select(sp => new SucursalProductoDTO
                         {
                             SucursalId = sp.SucursalId,
-                            SucursalName = sp.Sucursal.SucursalName,  // Nombre de la Sucursal
+                            SucursalName = sp.Sucursal.SucursalName, 
                             ProductoId = sp.ProductoId,
-                            ProductoName = sp.Producto.ProductoName,  // Nombre del Producto
+                            ProductoName = sp.Producto.ProductoName, 
                             Cantidad = sp.Cantidad
                         }).ToList();
 
@@ -135,7 +134,6 @@ namespace ServicioApiPruebaTecnica.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while fetching the data.");
             }
         }
-        // GET: api/SucursalProducto/{sucursalId}/{productoId}
          
         [HttpGet("{sucursalId:int}/{productoId:int}", Name = "GetSucursalProductoById")]
         #region
@@ -186,7 +184,6 @@ namespace ServicioApiPruebaTecnica.Controllers
             }
         }
 
-        // POST: api/SucursalProducto/Crear
         [HttpPost]
         #region
         [Route("Crear")]
@@ -217,7 +214,7 @@ namespace ServicioApiPruebaTecnica.Controllers
                     return BadRequest();
                 }
                     
-                // Verificar si el ProductoId y SucursalId existen en sus respectivas tablas
+
                 var producto = _dbContext.Productos.FirstOrDefault(p => p.Id == model.ProductoId);
                 var sucursal = _dbContext.Sucursales.FirstOrDefault(s => s.Id == model.SucursalId);
 
@@ -227,21 +224,20 @@ namespace ServicioApiPruebaTecnica.Controllers
                     return BadRequest("ProductoId o SucursalId no existe.");
                 }
 
-                // Buscar un registro existente con la combinación SucursalId y ProductoId
+
                 var existente = _dbContext.SucursalesProductos
                     .FirstOrDefault(sp => sp.SucursalId == model.SucursalId && sp.ProductoId == model.ProductoId);
 
                 if (existente != null)
                 {
                     _logger.Log($"El registro existente es null");
-                    // Si existe, actualizar el registro existente
+
                     existente.Cantidad = model.Cantidad;
                     existente.updated_at = DateTime.Now;
                     _dbContext.SaveChanges();
-                    return NoContent(); // 204 No Content, porque se ha actualizado el registro existente
+                    return NoContent(); 
                 }
 
-                // Si no existe, crear un nuevo registro
                 var sucursalProducto = new SucursalProducto
                 {
                     SucursalId = model.SucursalId,
@@ -265,7 +261,7 @@ namespace ServicioApiPruebaTecnica.Controllers
             }
         }
 
-        // PUT: api/SucursalProducto/Editar
+
         
         [HttpPut]
         #region 
@@ -317,7 +313,7 @@ namespace ServicioApiPruebaTecnica.Controllers
             }
         }
 
-        // PATCH: api/SucursalProducto/{sucursalId}/{productoId}/Patch
+
          
         [HttpPatch("{sucursalId:int}/{productoId:int}/Patch", Name = "UpdatePartialSucursalProducto")]
         #region
@@ -385,7 +381,7 @@ namespace ServicioApiPruebaTecnica.Controllers
             }
         }
 
-        // DELETE: api/SucursalProducto/Delete/{sucursalId}/{productoId}
+
         [HttpDelete("Delete/{sucursalId:int}/{productoId:int}", Name = "DeleteSucursalProducto")]
         #region 
         [Produces("application/json", "application/xml")]
